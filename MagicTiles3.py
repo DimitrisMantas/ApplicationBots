@@ -20,11 +20,10 @@ import win32con
 
 # Register the colors on which the left mouse button will be clicked and released.
 LEFT_MOUSE_HOLD_ON_RGB_VALUES = [0, 0, 0]
-LEFT_MOUSE_RELEASE_ON_RGB_VALUES = [0, 150, 225]
 
 
 # Register the precision for comparing two RGB values to each other.
-PRECISION = 112.5
+PRECISION = 100
 
 
 # Register the programm runtime interupt button.
@@ -35,6 +34,7 @@ KEYBOARD_INTERRUPT = "C"
 # The Y-coordinates need to be set near the horizontal white line at the bottom, but not on it.
 COLUMN_MIDPOINTS_X_CORRDINATES = [720, 860, 1000, 1140]
 COLUMN_MIDPOINTS_Y_CORRDINATES = 540
+
 COLUMN_MIDPOINTS = [COLUMN_MIDPOINTS_X_CORRDINATES[0], COLUMN_MIDPOINTS_Y_CORRDINATES, COLUMN_MIDPOINTS_X_CORRDINATES[1], COLUMN_MIDPOINTS_Y_CORRDINATES, COLUMN_MIDPOINTS_X_CORRDINATES[2], COLUMN_MIDPOINTS_Y_CORRDINATES, COLUMN_MIDPOINTS_X_CORRDINATES[3], COLUMN_MIDPOINTS_Y_CORRDINATES]
 
 
@@ -43,131 +43,52 @@ def get_rgb_values(x, y):
     return pyautogui.pixel(x, y)
 
 
-def check_rgb_match(sample_rgb, target_rgb, precision, mode):
+def check_rgb_match(sample_rgb, target_rgb, precision):
     """Check if some sample RGB values is the same or "close enough" to some target RGB values."""
     # Register the function return flag.
-    return_flag = False
-
-    if mode == "rgb":
-        if abs(sum(sample_rgb) - sum(target_rgb)) <= precision:
-            return_flag = True
-    elif mode == "r":
-        if abs(sample_rgb[0] - target_rgb[0]) <= precision:
-            return_flag = True
-    elif mode == "g":
-        if abs(sample_rgb[1] - target_rgb[1]) <= precision:
-            return_flag = True
-    elif mode == "b":
-        if abs(sample_rgb[2] - target_rgb[2]) <= precision:
-            return_flag = True
-    else:
-        return_flag = False
-    return return_flag
+    return abs(sum(sample_rgb) - sum(target_rgb)) <= precision
 
 
-def left_mouse_hold(x, y):
+def left_mouse_click(x, y):
     """Register and hold a left mouse click at some screen position."""
+
+    # I'm gonna do what's called a pro-gamer move...
+    if not x: return
+
     # Register the mouse cursor screen position.
     win32api.SetCursorPos((x, y))
 
     # The next mouse event needs to be generated dx = dy = 0 px. from the current cursor position.
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
-
-
-def left_mouse_release():
-    """Release an active left mouse click."""
-    # This can be incorporated into the above function, but it is good to keep the separate.
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
 
 
-def main(column_midpoints, left_mouse_hold_on_rgb_values, left_mouse_release_on_rgb_values, precision, keyboard_interrupt):
+def main(column_midpoints, left_mouse_hold_on_rgb_values, precision, keyboard_interrupt):
     """This is the entry point of the program."""
+    # Sometimes the next mouse event needs to be generated dy > 0 px. from the current cursor position in order to account for the song speed.
+    dy = 100
+
     while not keyboard.is_pressed(keyboard_interrupt):
-
         # This line is for debugging purposes.
-        # start_measuring_runtime = time.time()
-
-        # Sometimes the next mouse event needs to be generated dy > 0 px. from the current cursor position in order to account for the song speed.
-        dy = 75
-        # There is some inherent lag between some pair conesecutive mouse events.
-        ddy = 10
+        # runtime = time.time()
 
         # PyAutoGUI can throw an OSError for some reason. This block is for debugging purposes.
         try:
-            column_1 = check_rgb_match(get_rgb_values(column_midpoints[0], column_midpoints[1]), left_mouse_hold_on_rgb_values, precision, mode="b")
-            column_2 = check_rgb_match(get_rgb_values(column_midpoints[2], column_midpoints[3]), left_mouse_hold_on_rgb_values, precision, mode="b")
-            column_3 = check_rgb_match(get_rgb_values(column_midpoints[4], column_midpoints[5]), left_mouse_hold_on_rgb_values, precision, mode="b")
-            column_4 = check_rgb_match(get_rgb_values(column_midpoints[6], column_midpoints[7]), left_mouse_hold_on_rgb_values, precision, mode="b")
-
-            column_12 = column_1 and column_2
-            column_13 = column_1 and column_3
-            column_14 = column_1 and column_4
-            column_23 = column_2 and column_3
-            column_24 = column_2 and column_4
-            column_34 = column_3 and column_4
-
-            # Case 1: The column doesn't have a gradient.
-            if column_1:
-                if column_12:
-                    left_mouse_hold(column_midpoints[0], column_midpoints[1] + dy)
-                    left_mouse_release()
-
-                    left_mouse_hold(column_midpoints[2], column_midpoints[3] + dy + ddy)
-                    left_mouse_release()
-                elif column_13:
-                    left_mouse_hold(column_midpoints[0], column_midpoints[1] + dy)
-                    left_mouse_release()
-
-                    left_mouse_hold(column_midpoints[4], column_midpoints[5] + dy + ddy)
-                    left_mouse_release()
-                elif column_14:
-                    left_mouse_hold(column_midpoints[0], column_midpoints[1] + dy)
-                    left_mouse_release()
-
-                    left_mouse_hold(column_midpoints[6], column_midpoints[7] + dy + ddy)
-                    left_mouse_release()
-                elif column_1 and not column_2 and not column_3 and not column_4:
-                    left_mouse_hold(column_midpoints[0], column_midpoints[1] + dy)
-                    left_mouse_release()
-            elif column_2:
-                if column_23:
-                    left_mouse_hold(column_midpoints[2], column_midpoints[3] + dy)
-                    left_mouse_release()
-
-                    left_mouse_hold(column_midpoints[4], column_midpoints[5] + dy + ddy)
-                    left_mouse_release()
-                elif column_24:
-                    left_mouse_hold(column_midpoints[2], column_midpoints[3] + dy)
-                    left_mouse_release()
-
-                    left_mouse_hold(column_midpoints[6], column_midpoints[7] + dy + ddy)
-                    left_mouse_release()
-                elif column_2 and not column_3 and not column_4 and not column_1:
-                    left_mouse_hold(column_midpoints[2], column_midpoints[3] + dy)
-                    left_mouse_release()
-            elif column_3:
-                if column_34:
-                    left_mouse_hold(column_midpoints[4], column_midpoints[5] + dy)
-                    left_mouse_release()
-
-                    left_mouse_hold(column_midpoints[6], column_midpoints[7] + dy + ddy)
-                    left_mouse_release()
-                elif column_3 and not column_4 and not column_1 and not column_2:
-                    left_mouse_hold(column_midpoints[4], column_midpoints[5] + dy)
-                    left_mouse_release()
-            elif column_4 and not column_1 and not column_2 and not column_3:
-                left_mouse_hold(column_midpoints[6], column_midpoints[7] + dy)
-                left_mouse_release()
+            left_mouse_click(column_midpoints[0] * check_rgb_match(get_rgb_values(column_midpoints[0], column_midpoints[1]), left_mouse_hold_on_rgb_values, precision), column_midpoints[1] + dy)
+            left_mouse_click(column_midpoints[2] * check_rgb_match(get_rgb_values(column_midpoints[2], column_midpoints[3]), left_mouse_hold_on_rgb_values, precision), column_midpoints[3] + dy)
+            left_mouse_click(column_midpoints[4] * check_rgb_match(get_rgb_values(column_midpoints[4], column_midpoints[5]), left_mouse_hold_on_rgb_values, precision), column_midpoints[5] + dy)
+            left_mouse_click(column_midpoints[6] * check_rgb_match(get_rgb_values(column_midpoints[6], column_midpoints[7]), left_mouse_hold_on_rgb_values, precision), column_midpoints[7] + dy)
         except OSError:
             pass
 
-        # This line is for debugging purposes.
-        # print("This loop took {} seconds.".format(time.time() - start_measuring_runtime))
+        # These lines are for debugging purposes.
+        # runtime = time.time() - runtime
+        # print("This loop took {0} seconds. The game is being run at {1} FPS.".format(runtime, runtime ** -1))
 
 
 if __name__ == "__main__":
     """Run the program."""
     # This helps bring the game screen out of the background.
-    time.sleep(5)
+    time.sleep(3)
 
-    main(COLUMN_MIDPOINTS, LEFT_MOUSE_HOLD_ON_RGB_VALUES, LEFT_MOUSE_RELEASE_ON_RGB_VALUES, PRECISION, KEYBOARD_INTERRUPT)
+    main(COLUMN_MIDPOINTS, LEFT_MOUSE_HOLD_ON_RGB_VALUES, PRECISION, KEYBOARD_INTERRUPT)
