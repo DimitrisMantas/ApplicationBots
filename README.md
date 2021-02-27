@@ -4,7 +4,7 @@ Welcome to ApplicationBots!
 
 This repository is meant for some of my personal side-projects, which I mainly pursue as a hobby during my own free time. For my ongoing, as well as my past school projects, please visit DimitrisMantas/iCollect, /Nu.mTools and /TriMeshTools.
 
-ApplicationBots contains bots for some of the most well-known dektop and mobile applications and games.
+ApplicationBots contains bots for some of the most well-known desktop and mobile applications and games.
 
 # Disclaimer
 
