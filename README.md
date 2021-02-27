@@ -2,11 +2,11 @@
 
 Welcome to ApplicationBots!
 
-This repository is meant for some of my personal side-projects, which I mainly pursue as a hobby during my own free time. For my ongoing, as well as my past school projects, please visit DimitrisMantas/iCollect, /Nu.mTools and /TriMeshTools.
+This repository is meant for some of my personal side-projects, which I mainly pursue as a hobby during my own free time. For my ongoing, as well as my past school projects, please visit **DimitrisMantas**/iCollect, /Nu.mTools and /TriMeshTools.
 
 ApplicationBots contains bots for some of the most well-known desktop and mobile applications and games.
 
-# Disclaimer
+## Disclaimer
 
 1. All programs have been verified to be in decent working condition, but they have not been debugged using test cases.
 
