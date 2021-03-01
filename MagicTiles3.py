@@ -27,12 +27,15 @@ LEFT_MOUSE_CLICK_ON_RGB_VALUES = (0, 0, 0)
 # Register the precision for comparing two RGB values to one another.
 PRECISION = 100 # Out of 3 * 255 = 765.
 
+# Register the verical distance between the screen positions of the midpoint of each column and of said click in pixels.
+# This can help account for the fact that movement speed of the interactive objects can be greater than the program runtime.
+DY = 100
 
 # Register a program runtime interrupt key, so that the the infinite loop below can be stopped.
 KEYBOARD_INTERRUPT = "C"
 
 
-# Register the screen position of the midpoint of each column in pixels.
+# Register the screen position of said points in pixels.
 COLUMN_MIDPOINTS = (720, 540, 860, 540, 1000, 540, 1140, 540) # (Column 1, Column 2, Column 3, Column 4)
 
 
@@ -54,12 +57,8 @@ def left_mouse_click(x, y):
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0)
 
 
-def main(column_midpoints, left_mouse_click_on_rgb_values, precision, keyboard_interrupt):
+def main(column_midpoints, left_mouse_click_on_rgb_values, precision, dy, keyboard_interrupt):
     """This is the entry point of the program."""
-    # When the speed of the current song is high enough, the click must be generated dy > 0 pixels from the current cursor position.
-    # This can help account for the non-zero program runtime.
-    dy = 100
-
     while not keyboard.is_pressed(keyboard_interrupt):
         # This line is for debugging purposes.
         # Start measuring the program runtime.
@@ -68,17 +67,16 @@ def main(column_midpoints, left_mouse_click_on_rgb_values, precision, keyboard_i
         # PyAutoGUI can throw an OSError because of a currently unknown reason (26/02/2021).
         # This block is for debugging purposes.
         try:
-            left_mouse_click(column_midpoints[0] * check_rgb_match(pyautogui.pixel(column_midpoints[0], column_midpoints[1]), left_mouse_click_on_rgb_values, precision), column_midpoints[1] + dy)
-            left_mouse_click(column_midpoints[2] * check_rgb_match(pyautogui.pixel(column_midpoints[2], column_midpoints[3]), left_mouse_click_on_rgb_values, precision), column_midpoints[3] + dy)
-            left_mouse_click(column_midpoints[4] * check_rgb_match(pyautogui.pixel(column_midpoints[4], column_midpoints[5]), left_mouse_click_on_rgb_values, precision), column_midpoints[5] + dy)
-            left_mouse_click(column_midpoints[6] * check_rgb_match(pyautogui.pixel(column_midpoints[6], column_midpoints[7]), left_mouse_click_on_rgb_values, precision), column_midpoints[7] + dy)
+            left_mouse_click(column_midpoints[0] * check_rgb_match(pyautogui.pixel(column_midpoints[0], column_midpoints[1]), left_mouse_click_on_rgb_values, precision), column_midpoints[1] + DY)
+            left_mouse_click(column_midpoints[2] * check_rgb_match(pyautogui.pixel(column_midpoints[2], column_midpoints[3]), left_mouse_click_on_rgb_values, precision), column_midpoints[3] + DY)
+            left_mouse_click(column_midpoints[4] * check_rgb_match(pyautogui.pixel(column_midpoints[4], column_midpoints[5]), left_mouse_click_on_rgb_values, precision), column_midpoints[5] + DY)
+            left_mouse_click(column_midpoints[6] * check_rgb_match(pyautogui.pixel(column_midpoints[6], column_midpoints[7]), left_mouse_click_on_rgb_values, precision), column_midpoints[7] + DY)
         except OSError:
             pass
 
         # These lines are for debugging purposes.
         # Compute the runtime of each loop.
         # runtime = time.time() - runtime
-
         # print("This loop took {0} seconds. The game is being run at {1} FPS.".format(runtime, runtime ** -1))
 
 
@@ -86,4 +84,4 @@ if __name__ == "__main__":
     # Allow some buffer time in order to bring the game screen out of the current background.
     time.sleep(3)
 
-    main(COLUMN_MIDPOINTS, LEFT_MOUSE_CLICK_ON_RGB_VALUES, PRECISION, KEYBOARD_INTERRUPT)
+    main(COLUMN_MIDPOINTS, LEFT_MOUSE_CLICK_ON_RGB_VALUES, PRECISION, DY, KEYBOARD_INTERRUPT)

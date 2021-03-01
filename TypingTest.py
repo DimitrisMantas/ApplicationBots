@@ -42,7 +42,7 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 # Register the coordinates of the maximum area bounding box, which contains the very first single line of text.
 FIRST_BOUNDING_BOX = (1150, 320, 1800, 355) # (Top Left Corner, Bottom Right Corner)
 
-# Register the vertical screen distance between two consecutive new lines of text.
+# Register the vertical screen distance between two consecutive new lines of text in pixels.
 DY = 100
 
 
@@ -109,5 +109,4 @@ if __name__ == "__main__":
         # These lines are for debugging purposes.
         # Compute the runtime of each loop.
         # runtime = time.time() - runtime
-
         # print("This loop took {0} seconds. The application is being run at {1} FPS.".format(runtime, runtime ** -1))
