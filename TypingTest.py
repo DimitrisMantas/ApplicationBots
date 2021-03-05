@@ -19,14 +19,14 @@ import pytesseract
 
 # 1. Install the latest version of Tesseract for Microsoft Windows [2].
 # 2. Install the Tesseract wrapper for Python [3].
-# 3. Note the location of the Tesseract excecutable file.
+# 3. Note the location of the Tesseract executable file.
 
 # [1]: https://en.wikipedia.org/wiki/Tesseract_(software)
 # [2]: https://github.com/UB-Mannheim/tesseract/wiki
 # [3]: https://pypi.org/project/pytesseract/
 
 
-# Copy and paste the location of the Tesseract excecutable file here.
+# Copy and paste the location of the Tesseract executable file here.
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 
@@ -41,6 +41,7 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 
 # Register the coordinates of the maximum area bounding box, which contains the very first single line of text.
 FIRST_BOUNDING_BOX = (1150, 320, 1800, 355) # (Top Left Corner, Bottom Right Corner)
+
 
 # Register the vertical screen distance between two consecutive new lines of text in pixels.
 DY = 100
@@ -78,7 +79,7 @@ def write(string):
 
 def main(bounding_box):
     """This is the entry point of the program."""
-    # Grab the required screenshot, convert its color mode from RGB to B&W and finally encode it into a NumPy array.
+    # Grab the required screenshot and convert its color mode from RGB to B&W.
     screenshot = ImageOps.grayscale(ImageGrab.grab(bbox=bounding_box))
 
     # This line is meant for debugging purposes only.
