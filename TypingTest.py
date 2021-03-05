@@ -56,13 +56,18 @@ KEYBOARD_INTERRUPT = "C"
 
 
 def ocr(image):
-    """Perform OCR on a NumPy array, which encodes a PIL image."""
-    # Any image manipulation must performed below this line. Color profile assignment is meant to be performed outside this function block.
+    """Perform OCR on a NumPy array, which encodes an RGB image."""
 
+    # Convert the color mode of said image from RGB to B&W.
+    image = ImageOps.grayscale(image)
 
+    # Encode the image into a NumPy array.
+    image = np.array(image) 
+
+    # Perform OCR on said image and build a corresponding output string.
     string = pytesseract.image_to_string(image)
 
-    # The last character in the resulting OCR string is a special return character, which must be ignored.
+    # The last character in said string is a special return character, which must be ignored.
     # Also, a single space must be registered at the end of each word.
     return string[:-2] + " " 
 
@@ -79,15 +84,14 @@ def write(string):
 
 def main(bounding_box):
     """This is the entry point of the program."""
-    # Grab the required screenshot and convert its color mode from RGB to B&W.
-    screenshot = ImageOps.grayscale(ImageGrab.grab(bbox=bounding_box))
+
+    screenshot = ImageGrab.grab(bbox=bounding_box)
 
     # This line is meant for debugging purposes only.
     # Print said screenshot to a temporary PNG image.
     # screenshot.show()
 
-    # Encode the required screenshot into a NumPy array, perform OCR on it and write the resulting string of characters.
-    write(ocr(np.array(screenshot)))
+    write(ocr(screenshot))
 
 
 if __name__ == "__main__":
